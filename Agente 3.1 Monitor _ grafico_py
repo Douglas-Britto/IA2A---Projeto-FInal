@@ -1,0 +1,78 @@
+from langchain_ollama import OllamaLLM
+from langchain_core.prompts import PromptTemplate   # ✅ caminho atualizado
+from langchain.chains import LLMChain
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+
+# ==============================
+# 1️⃣ CONFIGURAR O MODELO GEMMA
+# ==============================
+llm = OllamaLLM(model="gemma3:4b")   # ✅ nome correto do modelo
+
+# ==============================
+# 2️⃣ DADOS FINANCEIROS
+# ==============================
+itens = ["Faturamento Bruto", "CMV", "Despesas Fixas", "Despesas Variáveis", "Lucro Líquido"]
+valores_atuais = [740088.60, 333039.87, 88810.60, 148017.72, 170220.41]
+valores_proj = [888106.32, 399647.84, 88810.60, 177621.26, 222026.61]
+
+# ==============================
+# 3️⃣ GERAR GRÁFICO DE COLUNAS DUPLAS
+# ==============================
+x = np.arange(len(itens))
+largura = 0.35
+
+plt.figure(figsize=(12, 7))
+barras1 = plt.bar(x - largura/2, valores_atuais, largura, label="Atual (R$)", color="#4A90E2")
+barras2 = plt.bar(x + largura/2, valores_proj, largura, label="Projeção 12 meses (R$)", color="#50E3C2")
+
+# Rótulos numéricos
+for b in barras1:
+    plt.text(b.get_x() + b.get_width()/2, b.get_height() + 5000,
+             f"{b.get_height():,.0f}".replace(",", "."), ha='center', va='bottom', fontsize=9)
+
+for b in barras2:
+    plt.text(b.get_x() + b.get_width()/2, b.get_height() + 5000,
+             f"{b.get_height():,.0f}".replace(",", "."), ha='center', va='bottom', fontsize=9)
+
+plt.title("Comparativo: Atual x Projeção 12 meses", fontsize=14, fontweight="bold")
+plt.xticks(x, itens, rotation=30, ha="right")
+plt.ylabel("Valores (R$)")
+plt.legend()
+plt.grid(axis="y", linestyle="--", alpha=0.6)
+plt.tight_layout()
+
+# Caminho completo do arquivo
+caminho_arquivo = os.path.join(os.getcwd(), "grafico_projecao.png")
+plt.savefig(caminho_arquivo, dpi=300)
+print(f"\n📊 Gráfico salvo em: {caminho_arquivo}")
+
+plt.close()   # ✅ evita abrir a janela interativa (útil em scripts automáticos)
+
+# ==============================
+# 4️⃣ INTERPRETAÇÃO PELO GEMMA
+# ==============================
+prompt = PromptTemplate(
+    input_variables=["dados"],
+    template=(
+        "Analise os seguintes dados financeiros e descreva de forma simples e direta: "
+        "{dados} "
+        "Explique se o crescimento parece sustentável e onde estão os maiores ganhos."
+    )
+)
+
+chain = LLMChain(llm=llm, prompt=prompt)
+
+dados_resumo = """
+Faturamento atual: R$740.088,60 → Projeção: R$888.106,32
+CMV: R$333.039,87 → R$399.647,84
+Despesas Fixas: R$88.810,60 (mantidas)
+Despesas Variáveis: R$148.017,72 → R$177.621,26
+Lucro Líquido: R$170.220,41 → R$222.026,61
+"""
+
+resposta = chain.run(dados=dados_resumo)
+
+print("\n🧠 Análise do modelo Gemma 3 4B:")
+print(resposta)
