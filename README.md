@@ -1,3 +1,6 @@
+<img width="2560" height="1440" alt="Banner do youtube canal de inglês moderno azul e vermelho" src="https://github.com/user-attachments/assets/8cef224a-4cb9-4a1f-8026-18d72c2a7c32" />
+
+
 # IA2A – Projeto Final: Ferramentas e Relatórios Fiscais
 
 Este repositório contém o projeto final desenvolvido para o curso **IA2A Auditor Fiscal**, com foco em **ferramentas inteligentes de análise fiscal** e **relatórios estratégicos para crescimento de metas**.
