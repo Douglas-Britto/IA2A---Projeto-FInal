@@ -28,3 +28,4 @@ Este projeto utiliza **Git LFS** para armazenar arquivos grandes como vídeos. P
 git clone https://github.com/Douglas-Britto/IA2A---Projeto-FInal.git
 cd IA2A---Projeto-Final
 git lfs pull
+sob a licença MIT.
